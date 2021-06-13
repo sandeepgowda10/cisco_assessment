@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <div>
+        <form>
+            <table align="center" style="padding:20px; margin: 20px;">
+                <tr>
+                    <td><label>Host name</label></td>
+                    <td><input type="text" id="hostname" value="{{ data.hostname }}"></td>
+                </tr>             
+                <tr>
+                    <td><label>SAP ID</label></td>
+                    <td><input type="text" id="sapid" value="{{ data.sapid }}"></td>
+                </tr>
+                <tr>
+                    <td><label>Loopback ID</label></td>
+                    <td><input type="text" id="loopbackid" value="{{ data.loopbackid }}"></td>
+                </tr>
+                <tr>
+                    <td><label>IPV4</label></td>
+                    <td><input type="text" id="ipv4" value="{{ data.ipv4 }}"></td>
+                </tr>
+                <tr>
+                    <td><label>MAC Address</label></td>
+                    <td><input type="text" id="mac_address" value="{{ data.mac_address }}"></td>
+                </tr>
+                <tr>
+                    <input type="hidden" id="data_id" value="{{ data.id }}">
+                </tr>
+                <tr>
+                    <td><input type="button" value="UPDATE" onclick="updateRecord()"/></td>
+                    <td><input type="button" value="BACK" onclick="home()"/></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <script type="text/javascript">
+        function home() {
+            URL = 'http://127.0.0.1:8000/api/fetch_router/';
+            location.replace(URL);
+        }
+        function updateRecord() {
+            var hostname = document.getElementById('hostname').value;
+            var sapid = document.getElementById('sapid').value;
+            var loopbackid = document.getElementById('loopbackid').value;
+            var ipv4 = document.getElementById('ipv4').value;
+            var mac_address = document.getElementById('mac_address').value;;
+            var id = document.getElementById('data_id').value;
+            var data = {
+                'id' : id,
+                'hostname' : hostname,
+                'sapid' : sapid,
+                'loopbackid' : loopbackid,
+                'ipv4' : ipv4,
+                'mac_address' : mac_address,
+            };
+            var payload = JSON.stringify(data);
+            $.ajax({
+                url: 'http://127.0.0.1:8000/api/update/' + id,
+                data: payload,
+                method: 'PUT',
+                success: function (data, status) {
+                    alert('Record updated');
+                    home();
+                }, error: function (data, status) {
+                    alert(data);
+                    console.log(data);
+                    console.log(status);
+                }
+            });
+        }
+    </script>
+{% endblock %}

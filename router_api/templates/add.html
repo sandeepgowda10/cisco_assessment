@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <div>
+        <form>
+            <table align="center" style="padding:20px; margin: 20px;">
+                <tr>
+                    <td><label>Host name</label></td>
+                    <td><input type="text" id="hostname"></td>
+                </tr>             
+                <tr>
+                    <td><label>SAP ID</label></td>
+                    <td><input type="text" id="sapid"></td>
+                </tr>
+                <tr>
+                    <td><label>Loopback ID</label></td>
+                    <td><input type="text" id="loopbackid"></td>
+                </tr>
+                <tr>
+                    <td><label>IPV4</label></td>
+                    <td><input type="text" id="ipv4"></td>
+                </tr>
+                <tr>
+                    <td><label>MAC Address</label></td>
+                    <td><input type="text" id="mac_address"></td>
+                </tr>
+                <tr>
+                    <td><input type="button" value="ADD" onclick="addRecord()"/></td>
+                    <td><input type="button" value="BACK" onclick="home()"/></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <script type="text/javascript">
+        function home() {
+            URL = 'http://127.0.0.1:8000/api/fetch_router/';
+            location.replace(URL);
+        }
+        function addRecord() {
+            var hostname = document.getElementById('hostname').value;
+            var sapid = document.getElementById('sapid').value;
+            var loopbackid = document.getElementById('loopbackid').value;
+            var ipv4 = document.getElementById('ipv4').value;
+            var mac_address = document.getElementById('mac_address').value;;
+            var data = {
+                'hostname' : hostname,
+                'sapid' : sapid,
+                'loopbackid' : loopbackid,
+                'ipv4' : ipv4,
+                'mac_address' : mac_address,
+            };
+            var payload = JSON.stringify(data);
+            $.ajax({
+                url: 'http://127.0.0.1:8000/api/add/',
+                data: payload,
+                method: 'POST',
+                success: function (data, status) {
+                    alert('Record added successfully');
+                    home();
+                }, error: function (data, status) {
+                    alert(data);
+                    console.log(data);
+                    console.log(status);
+                }
+            });
+        }
+    </script>
+{% endblock %}

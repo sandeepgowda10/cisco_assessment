@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+            <div>
+                <table border="1" align="center" style="padding: 20px; margin: 20px">
+                      <tr>
+                        <th>Host name</th>
+                        <th>SAP ID</th>
+                        <th>Loopback ID</th>
+                        <th>IPv4</th>
+                        <th>MAC Address</th>
+                        <th>Select</th>
+                      </tr>
+                        {% for each in router_data %}
+                        <tr>
+                            <td>{{ each.hostname }}</td>
+                          <td>{{ each.sapid }}</td>
+                          <td>{{ each.loopbackid }}</td>
+                          <td>{{ each.ipv4 }}</td>
+                          <td>{{ each.mac_address }}</td>
+                          <td><input type="radio" name="router_detail" value="{{ each.id}}"></td>
+                      </tr>
+                      {% endfor %}
+                </table>
+                <table align="center" style="padding: 20px; margin: 20px; aling: center">
+                <tr>
+                    <td>
+                        <input type="button" value="ADD" onclick="addRecord()" />
+                    </td>
+                    <td>
+                        <input type="button" value="UPDATE" onclick="updateRecord()" />
+                    </td>
+                    <td>
+                        <input type="button" value="DELETE" onclick="deleteRecord()" >
+                    </td>
+                  </tr>
+                </table>
+
+
+              </div>
+            <script type="text/javascript">
+              function getSelectedOption() {
+                var record = document.getElementsByName("router_detail");
+                var val = undefined;
+                for(var i=0; i<record.length; i++) {
+                  if(record[i].checked) {
+                    val = record[i].value;
+                  }
+                }
+                return val;
+              }
+              function deleteRecord() {
+                val = getSelectedOption();
+                if(val === undefined){
+                  alert('Select a record to delete');
+                  return;
+                }
+                $.ajax({
+                  url: 'http://127.0.0.1:8000/api/delete/' + val,
+                  contentType: 'json',
+                  dataType: 'application/json',
+                  method: 'DELETE',
+                  type: 'DELETE',
+                  success: function (data, status) {
+                    alert('Record removed');
+                    location.reload();
+                  }, error: function (data, status) {
+                    alert(data);
+                  }
+                });
+              }
+
+              function updateRecord() {
+                val = getSelectedOption();
+                if(val === undefined){
+                  alert('Select a record to update');
+                  return;
+                }
+                URL = 'http://127.0.0.1:8000/api/get_router/' + val
+                location.replace(URL)
+              }
+
+              function addRecord() {
+                URL = 'http://127.0.0.1:8000/api/add/';
+                location.replace(URL)
+              }
+
+            </script>
+{% endblock %}
